@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StorePartnerRequest;
 use App\Http\Requests\UpdatePartnerRequest;
 use App\Models\Partner;
+use App\Http\Resources\PartnersResource;
 
 class PartnersController extends Controller
 {
@@ -15,17 +16,7 @@ class PartnersController extends Controller
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        return PartnersResource::collection(Partner::all());
     }
 
     /**
@@ -36,7 +27,14 @@ class PartnersController extends Controller
      */
     public function store(StorePartnerRequest $request)
     {
-        //
+        $faker = \Faker\Factory::create(1);
+
+        $partner = Partner::create([
+            'name' => $faker->name,
+            'data_format' => $faker->randomElement(['XML', 'CSV', 'JSON']),
+        ]);
+
+        return new PartnersResource($partner);
     }
 
     /**
@@ -47,19 +45,9 @@ class PartnersController extends Controller
      */
     public function show(Partner $partner)
     {
-        //
+        return new PartnersResource($partner);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Partner  $partner
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Partner $partner)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.
@@ -70,7 +58,12 @@ class PartnersController extends Controller
      */
     public function update(UpdatePartnerRequest $request, Partner $partner)
     {
-        //
+        $partner->update([
+            'name' => $request->input('name'),
+            'data_format' => $request->input('data_format')
+        ]);
+
+        return new PartnersResource($author);
     }
 
     /**
@@ -81,6 +74,7 @@ class PartnersController extends Controller
      */
     public function destroy(Partner $partner)
     {
-        //
+        $partner->delete();
+        return response(null, 204);
     }
 }
