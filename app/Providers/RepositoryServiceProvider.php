@@ -7,6 +7,8 @@ use App\Repository\Eloquent\BaseRepository;
 use App\Repository\EloquentRepositoryInterface; 
 use App\Repository\Eloquent\UserRepository; 
 use App\Repository\UserRepositoryInterface; 
+use App\Repository\Eloquent\WeatherElementRepository; 
+use App\Repository\WeatherElementRepositoryInterface; 
 
 class RepositoryServiceProvider extends ServiceProvider
 {
@@ -19,6 +21,7 @@ class RepositoryServiceProvider extends ServiceProvider
     {
         $this->app->bind(EloquentRepositoryInterface::class, BaseRepository::class);
         $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
+        $this->app->bind(WeatherElementRepositoryInterface::class, WeatherElementRepository::class);
     }
 
     /**

@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PartnersController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\WeatherElementController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,6 +24,7 @@ Route::middleware('auth:sanctum')->group(function() {
     });
 
     Route::apiResource('/partners', PartnersController::class);
+    Route::apiResource('/weather-elements', WeatherElementController::class);
 });
 
 //Public routes
