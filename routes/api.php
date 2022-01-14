@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PartnersController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\WeatherElementController;
+use App\Http\Controllers\PredictionsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,6 +26,7 @@ Route::middleware('auth:sanctum')->group(function() {
 
     Route::apiResource('/partners', PartnersController::class);
     Route::apiResource('/weather-elements', WeatherElementController::class);
+    Route::apiResource('/predictions', PredictionsController::class);
 });
 
 //Public routes

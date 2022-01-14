@@ -5,9 +5,18 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Prediction;
 use App\Http\Resources\PredictionsResource;
+use App\Repository\PredictionRepositoryInterface;
+use Throwable;
 
 class PredictionsController extends Controller
 {
+    private $predictionRepository;
+  
+    public function __construct(PredictionRepositoryInterface $predictionRepository)
+    {
+        $this->predictionRepository = $predictionRepository;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -15,18 +24,30 @@ class PredictionsController extends Controller
      */
     public function index()
     {
-        return PredictionsResource::collection(Prediction::all());
+        try {
+            $predictions = $this->predictionRepository->all();
+            return PredictionsResource::collection($predictions);
+        } catch (Throwable $e) {
+            report($e);
+            return response()->json(['message' => 'Failed to get resource Internal Server Error.'], 500);
+        }
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Prediction  $prediction
+     * @param  \App\Models\Prediction $prediction
      * @return \Illuminate\Http\Response
      */
     public function show(Prediction $prediction)
     {
-        return new PredictionsResource($prediction);
+        try {
+            $prediction = $this->predictionRepository->findById($prediction->id);
+            return PredictionsResource::collection([$prediction]);
+        } catch (Throwable $e) {
+            report($e);
+            return response()->json(['message' => 'Failed to get resource Internal Server Error.'], 500);
+        }
     }
 
     /**
@@ -49,15 +70,16 @@ class PredictionsController extends Controller
      */
     public function update(Request $request, Prediction $prediction)
     {
-        $prediction->update([
-            'scale' => $request->input('scale'),
-            'city' => $request->input('city'),
-            'date' => $request->input('date'),
-            'value' => $request->input('value'),
-            'time' => $request->input('time')
-        ]);
+        try {
+            $updateResult = $this->predictionRepository->update($prediction->id, $request->all());
+            if($updateResult){
+                return PredictionsResource::collection([$prediction->fresh()]);
+            }
 
-        return new PredictionsResource($prediction);
+        } catch (Throwable $e) {
+            report($e);
+            return response()->json(['message' => 'Update failed Internal Server Error.'], 500);
+        }
     }
 
     /**
@@ -67,8 +89,14 @@ class PredictionsController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function destroy(Prediction $prediction)
-    { //check deleting when there is many to many relationship
-        $prediction->delete();
-        return response(null, 204);
+    { 
+        //check deleting when there is many to many relationship
+        try{
+            $deleteResult = $this->predictionRepository->deleteById($prediction->id);
+            return response($deleteResult, 204);
+        } catch (Throwable $e){
+            report($e);
+            return response()->json(['message' => 'Delete failed Internal Server Error.'], 500);
+        }
     }
 }

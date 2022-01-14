@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Repository\UserRepositoryInterface;
 use App\Http\Resources\UsersResource;
+use Throwable;
 
 class UsersController extends Controller
 {
@@ -20,8 +21,12 @@ class UsersController extends Controller
      */
     public function index()
     {
-        $users = $this->userRepository->all();
-
-        return UsersResource::collection($users);
+        try {
+            $users = $this->userRepository->all();
+            return UsersResource::collection($users);
+        } catch (Throwable $e) {
+            report($e);
+            return response()->json(['message' => 'Failed to get resource Internal Server Error.'], 500);
+        }
     }
 }

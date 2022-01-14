@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\RegisterAuthRequest;
 use App\Http\Requests\LoginAuthRequest;
 use App\Repository\UserRepositoryInterface;
+use Throwable;
 
 class AuthController extends Controller
 {
@@ -26,20 +27,26 @@ class AuthController extends Controller
      */
     public function register(RegisterAuthRequest $request) {
 
-        $user = $this->authRepository->create([
-            'name' => $request->input('name'),
-            'email' => $request->input('email'),
-            'password' => bcrypt($request->input('password'))
-        ]);
+        try {
+            $user = $this->authRepository->create([
+                'name' => $request->input('name'),
+                'email' => $request->input('email'),
+                'password' => bcrypt($request->input('password'))
+            ]);
+    
+            $token = $user->createToken('myapptoken')->plainTextToken;
+    
+            $response = [
+                'user' => $user,
+                'token' => $token
+            ];
 
-        $token = $user->createToken('myapptoken')->plainTextToken;
+            return response($response, 201);
 
-        $response = [
-            'user' => $user,
-            'token' => $token
-        ];
-
-        return response($response, 201);
+        } catch (Throwable $e) {
+            report($e);
+            return response()->json(['message' => 'Failed to register user Internal Server Error.'], 500);
+        }
     }
 
     /**
@@ -49,22 +56,28 @@ class AuthController extends Controller
      */
     public function login(LoginAuthRequest $request) {
  
-        $user = $this->authRepository->find('email', $request->input('email'));
+        try {
+            $user = $this->authRepository->find('email', $request->input('email'));
 
-        if(!$user || !Hash::check($request->input('password'), $user->password)) {
-            return response([
-                'message' => 'Supplied email or password are incorrect, Please try again.'
-            ], 401);
+            if(!$user || !Hash::check($request->input('password'), $user->password)) {
+                return response()->json([
+                    'message' => 'Supplied email or password are incorrect, Please try again.'
+                ], 401);
+            }
+    
+            $token = $user->createToken('myapptoken')->plainTextToken;
+    
+            $response = [
+                'user' => $user,
+                'token' => $token
+            ];
+    
+            return response($response, 201);
+
+        } catch (Throwable $e) {
+            report($e);
+            return response()->json(['message' => 'Failed login Internal Server Error.'], 500);
         }
-
-        $token = $user->createToken('myapptoken')->plainTextToken;
-
-        $response = [
-            'user' => $user,
-            'token' => $token
-        ];
-
-        return response($response, 201);
     }
 
     /**
@@ -72,10 +85,12 @@ class AuthController extends Controller
      * @param  \Illuminate\Http\Request  $request
      */
     public function logout(Request $request) {
-        auth()->user()->tokens()->delete();
-
-        return [
-            'message' => 'Logged out'
-        ];
+        try {
+            auth()->user()->tokens()->delete();
+            return response()->json(['message' => 'User logged out.'], 201);
+        } catch (Throwable $e) {
+            report($e);
+            return response()->json(['message' => 'Failed to log out user Internal Server Error.'], 500);
+        }
     }
 }
