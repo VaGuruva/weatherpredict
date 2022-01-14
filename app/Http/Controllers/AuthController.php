@@ -6,17 +6,17 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
-use App\Http\Requests\Auth\RegisterRequest;
-use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Requests\RegisterAuthRequest;
+use App\Http\Requests\LoginAuthRequest;
 
 class AuthController extends Controller
 {
     /**
      * Register new user.
-     * @param  \App\Http\Requests\Auth\RegisterRequest  $request
+     * @param  \App\Http\Requests\RegisterAuthRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function register(RegisterRequest $request) {
+    public function register(RegisterAuthRequest $request) {
 
         $user = User::create([
             'name' => $request->input('name'),
@@ -36,10 +36,10 @@ class AuthController extends Controller
 
     /**
      * User login.
-     * @param  \App\Http\Requests\Auth\LoginRequest  $request
+     * @param  \App\Http\Requests\LoginAuthRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function login(LoginRequest $request) {
+    public function login(LoginAuthRequest $request) {
  
         $user = User::where('email', $request->input('email'))->first();
 

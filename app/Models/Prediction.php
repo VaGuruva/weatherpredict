@@ -8,4 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class Prediction extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'scale', 
+        'city',
+        'date',
+        'value',
+        'time'
+    ];
 }
