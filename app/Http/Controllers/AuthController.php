@@ -8,13 +8,13 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\RegisterAuthRequest;
 use App\Http\Requests\LoginAuthRequest;
-use App\Repository\EloquentRepositoryInterface;
+use App\Repository\UserRepositoryInterface;
 
 class AuthController extends Controller
 {
     private $authRepository;
   
-    public function __construct(EloquentRepositoryInterface $authRepository)
+    public function __construct(UserRepositoryInterface $authRepository)
     {
         $this->authRepository = $authRepository;
     }

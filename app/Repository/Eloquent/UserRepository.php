@@ -2,28 +2,23 @@
 
 namespace App\Repository\Eloquent;
 
-use App\Model\User;
+use App\Models\User;
 use App\Repository\UserRepositoryInterface;
-use Illuminate\Support\Collection;
 
 class UserRepository extends BaseRepository implements UserRepositoryInterface
 {
+    /**
+     * @var Model
+     */
+    protected $model;
 
-   /**
-    * UserRepository constructor.
-    *
-    * @param User $model
-    */
-   public function __construct(User $model)
-   {
-       parent::__construct($model);
-   }
-
-   /**
-    * @return Collection
-    */
-   public function all(): Collection
-   {
-       return $this->model->all();    
-   }
+    /**
+     * BaseRepository constructor.
+     *
+     * @param Model $model
+     */
+    public function __construct(User $model)
+    {
+        $this->model = $model;
+    }
 }
