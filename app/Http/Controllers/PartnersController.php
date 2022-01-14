@@ -63,7 +63,7 @@ class PartnersController extends Controller
             'data_format' => $request->input('data_format')
         ]);
 
-        return new PartnersResource($author);
+        return new PartnersResource($partner);
     }
 
     /**
