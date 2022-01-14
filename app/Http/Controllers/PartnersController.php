@@ -3,12 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StorePartnerRequest;
-use App\Http\Requests\UpdatePartnerRequest;
 use App\Models\Partner;
 use App\Http\Resources\PartnersResource;
+use App\Repository\PartnersRepositoryInterface;
+use \Illuminate\Http\Request;
+use Throwable;
 
 class PartnersController extends Controller
 {
+    private $partnersRepository;
+  
+    public function __construct(PartnersRepositoryInterface $partnersRepository)
+    {
+        $this->partnersRepository = $partnersRepository;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -16,25 +25,30 @@ class PartnersController extends Controller
      */
     public function index()
     {
-        return PartnersResource::collection(Partner::all());
+        try {
+            $partners = $this->partnersRepository->all();
+            return PartnersResource::collection($partners);
+        } catch (Throwable $e) {
+            report($e);
+            return response()->json(['message' => 'Failed to get resource Internal Server Error.'], 500);
+        }
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\StorePartnerRequest  $request
+     * @param  \App\Http\Requests\StorePartnerRequest $request
      * @return \Illuminate\Http\Response
      */
     public function store(StorePartnerRequest $request)
     {
-        $faker = \Faker\Factory::create(1);
-
-        $partner = Partner::create([
-            'name' => $faker->name,
-            'data_format' => $faker->randomElement(['XML', 'CSV', 'JSON']),
-        ]);
-
-        return new PartnersResource($partner);
+        try {
+            $partner =  $this->partnersRepository->create($request->all());
+            return PartnersResource::collection([$partner]);
+        } catch (Throwable $e) {
+            report($e);
+            return response()->json(['message' => 'Failed to create resource Internal Server Error.'], 500);
+        }
     }
 
     /**
@@ -45,36 +59,51 @@ class PartnersController extends Controller
      */
     public function show(Partner $partner)
     {
-        return new PartnersResource($partner);
+        try {
+            $partner = $this->partnersRepository->findById($partner->id);
+            return PartnersResource::collection([$partner]);
+        } catch (Throwable $e) {
+            report($e);
+            return response()->json(['message' => 'Failed to get resource Internal Server Error.'], 500);
+        }
     }
 
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\Http\Requests\UpdatePartnerRequest  $request
+     * @param  \Illuminate\Http\Request $request
      * @param  \App\Models\Partner  $partner
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdatePartnerRequest $request, Partner $partner)
+    public function update(Request $request, Partner $partner)
     {
-        $partner->update([
-            'name' => $request->input('name'),
-            'data_format' => $request->input('data_format')
-        ]);
-
-        return new PartnersResource($partner);
+        try {
+            $updateResult = $this->partnersRepository->update($partner->id, $request->all());
+            if($updateResult){
+                return PartnersResource::collection([$partner->fresh()]);
+            }
+        } catch (Throwable $e) {
+            report($e);
+            return response()->json(['message' => 'Update failed Internal Server Error.'], 500);
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Partner  $partner
+     * @param  \App\Models\Partner $partner
      * @return \Illuminate\Http\Response
      */
     public function destroy(Partner $partner)
     {
-        $partner->delete();
-        return response(null, 204);
+        try{
+            $deleteResult = $this->partnersRepository->deleteById($partner->id);
+            return response($deleteResult, 204);
+
+        } catch (Throwable $e){
+            report($e);
+            return response()->json(['message' => 'Delete failed Internal Server Error.'], 500);
+        }
     }
 }

@@ -7,6 +7,7 @@ use \Illuminate\Http\Request;
 use App\Models\WeatherElement;
 use App\Http\Resources\WeatherElementResource;
 use App\Repository\WeatherElementRepositoryInterface;
+use Throwable;
 
 class WeatherElementController extends Controller
 {
@@ -24,9 +25,13 @@ class WeatherElementController extends Controller
      */
     public function index()
     {
-        $weatherElements = $this->weatherElementRepository->all();
-
-        return WeatherElementResource::collection($weatherElements);
+        try {
+            $weatherElements = $this->weatherElementRepository->all();
+            return WeatherElementResource::collection($weatherElements);
+        } catch (Throwable $e) {
+            report($e);
+            return response()->json(['message' => 'Failed to get resource Internal Server Error.'], 500);
+        }
     }
 
     /**
@@ -37,12 +42,16 @@ class WeatherElementController extends Controller
      */
     public function store(Request $request)
     {
-        $weatherElement =  $this->weatherElementRepository->create([
-            'scale' => $request->input('scale'),
-            'type' => $request->input('type'),
-        ]);
+        try {
+            $weatherElement =  $this->weatherElementRepository->create($request->all());
 
-        return WeatherElementResource::collection($weatherElement);
+            return WeatherElementResource::collection([$weatherElement]);
+
+        } catch (Throwable $e) {
+            report($e);
+
+            return response()->json(['message' => 'Failed to create resource Internal Server Error.'], 500);
+        }
     }
 
     /**
@@ -53,7 +62,15 @@ class WeatherElementController extends Controller
      */
     public function show(WeatherElement $weatherElement)
     {
-        return WeatherElementResource::collection([$weatherElement]);
+        try {
+            $weatherElement = $this->weatherElementRepository->findById($weatherElement->id);
+
+            return WeatherElementResource::collection([$weatherElement]);
+        } catch (Throwable $e) {
+            report($e);
+
+            return response()->json(['message' => 'Failed to get resource Internal Server Error.'], 500);
+        }
     }
 
 
@@ -66,12 +83,16 @@ class WeatherElementController extends Controller
      */
     public function update(Request $request, WeatherElement $weatherElement)
     {
-        $weatherElement->update([
-            'scale' => $request->input('scale'),
-            'type' => $request->input('type'),
-        ]);
+        try {
+            $updateResult = $this->weatherElementRepository->update($weatherElement->id, $request->all());
+            if($updateResult){
+                return WeatherElementResource::collection([$weatherElement->fresh()]);
+            }
 
-        return WeatherElementResource::collection([$weatherElement]);
+        } catch (Throwable $e) {
+            report($e);
+            return response()->json(['message' => 'Update failed Internal Server Error.'], 500);
+        }
     }
 
     /**
@@ -82,7 +103,13 @@ class WeatherElementController extends Controller
      */
     public function destroy(WeatherElement $weatherElement)
     {
-        $weatherElement->delete();
-        return response(null, 204);
+        try{
+            $deleteResult = $this->weatherElementRepository->deleteById($weatherElement->id);
+            return response($deleteResult, 204);
+
+        } catch (Throwable $e){
+            report($e);
+            return response()->json(['message' => 'Delete failed Internal Server Error.'], 500);
+        }
     }
 }

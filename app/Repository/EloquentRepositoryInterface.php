@@ -17,13 +17,6 @@ interface EloquentRepositoryInterface
     public function all(array $columns = ['*'], array $relations = []): Collection;
 
     /**
-     * Get all trashed models.
-     *
-     * @return Collection
-     */
-    public function allTrashed(): Collection;
-
-    /**
      * Find model by id.
      *
      * @param int $modelId
@@ -38,22 +31,6 @@ interface EloquentRepositoryInterface
         array $relations = [],
         array $appends = []
     ): ?Model;
-
-    /**
-     * Find trashed model by id.
-     *
-     * @param int $modelId
-     * @return Model
-     */
-    public function findTrashedById(int $modelId): ?Model;
-
-    /**
-     * Find only trashed model by id.
-     *
-     * @param int $modelId
-     * @return Model
-     */
-    public function findOnlyTrashedById(int $modelId): ?Model;
 
     /**
      * Create a model.
@@ -79,20 +56,4 @@ interface EloquentRepositoryInterface
      * @return bool
      */
     public function deleteById(int $modelId): bool;
-
-    /**
-     * Restore model by id.
-     *
-     * @param int $modelId
-     * @return bool
-     */
-    public function restoreById(int $modelId): bool;
-
-    /**
-     * Permanently delete model by id.
-     *
-     * @param int $modelId
-     * @return bool
-     */
-    public function permanentlyDeleteById(int $modelId): bool;
 }
