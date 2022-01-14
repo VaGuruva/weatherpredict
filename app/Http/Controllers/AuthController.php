@@ -8,9 +8,17 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\RegisterAuthRequest;
 use App\Http\Requests\LoginAuthRequest;
+use App\Repository\EloquentRepositoryInterface;
 
 class AuthController extends Controller
 {
+    private $authRepository;
+  
+    public function __construct(EloquentRepositoryInterface $authRepository)
+    {
+        $this->authRepository = $authRepository;
+    }
+
     /**
      * Register new user.
      * @param  \App\Http\Requests\RegisterAuthRequest  $request
@@ -18,7 +26,7 @@ class AuthController extends Controller
      */
     public function register(RegisterAuthRequest $request) {
 
-        $user = User::create([
+        $user = $this->authRepository->create([
             'name' => $request->input('name'),
             'email' => $request->input('email'),
             'password' => bcrypt($request->input('password'))
@@ -41,7 +49,7 @@ class AuthController extends Controller
      */
     public function login(LoginAuthRequest $request) {
  
-        $user = User::where('email', $request->input('email'))->first();
+        $user = $this->authRepository->find('email', $request->input('email'));
 
         if(!$user || !Hash::check($request->input('password'), $user->password)) {
             return response([

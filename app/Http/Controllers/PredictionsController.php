@@ -67,7 +67,7 @@ class PredictionsController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function destroy(Prediction $prediction)
-    {
+    { //check deleting when there is many to many relationship
         $prediction->delete();
         return response(null, 204);
     }
