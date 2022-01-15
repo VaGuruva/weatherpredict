@@ -11,9 +11,23 @@ class XMLDataService implements XmlDataInterface
     public function convertData(string $filePath): array
     {
         $contents = File::get($filePath);
-        $xml = simplexml_load_string($contents);
+        $xml = simplexml_load_string($contents, "SimpleXMLElement", LIBXML_NOCDATA);
         $json = json_encode($xml);
-        $data = json_decode($json, TRUE);
-        return $data;
+        $data = json_decode($json,TRUE);
+        $value = 0;
+
+        foreach($data['prediction'] as $prediction){
+            $value += (float) $prediction['value'];
+        }
+
+        $value = $value/count($data['prediction']);
+
+        return [
+            'scale' => $data['@attributes']['scale'],
+            'city' => $data['city'],
+            'date' => $data['date'],
+            'time' => date('H:i'),
+            'value' => (string) $value
+        ];
     }
 }

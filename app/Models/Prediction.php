@@ -16,4 +16,9 @@ class Prediction extends Model
         'value',
         'time'
     ];
+
+    public function partners()
+    {
+        return $this->belongsToMany(Partner::class);
+    }
 }
