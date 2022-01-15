@@ -10,7 +10,8 @@ use App\Interfaces\XmlDataInterface;
 use Illuminate\Support\Facades\File;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Throwable;
+use App\Http\Resources\PredictionsResource;
+use \Exception;
 
 class DataProcessingController extends Controller
 {
@@ -42,17 +43,27 @@ class DataProcessingController extends Controller
      */
     public function storePartnerPredictions(Request $request)
     {
-        $partner = $this->partnersRepository->findByColumn('name', $request->route('partner'));
-        $publicPath = public_path("data-sources");
-        $result = [];
+        try {
+            $partner = $this->partnersRepository->findByColumn('name', $request->route('partner'));
+            $publicPath = public_path("data-sources");
+            $result = [];
+    
+            if(isset($partner->name)){
+                $files = File::allFiles("$publicPath/$partner->name");
+                foreach($files as $key => $filePath){
+                    $result = $this->processingStrategy[strtolower($filePath->getExtension())]->convertData($filePath);
+                }
+                $prediction = $this->predictionRepository->create($result);
+                $prediction->partners()->attach($partner);
 
-        if(isset($partner->name)){
-            $files = File::allFiles("$publicPath/$partner->name");
-            foreach($files as $key => $filePath){
-                $result = $this->processingStrategy[strtolower($filePath->getExtension())]->convertData($filePath);
+                return PredictionsResource::collection([$prediction]);
+            }else{
+                return response()->json(['message' => 'No partner by that name exists.'], 404);
             }
-            $prediction = $this->predictionRepository->create($result);
-            $prediction->partners()->attach($partner);
+
+        } catch (Exception $e) {
+            report($e);
+            return response()->json(['message' => 'Failed to store partner prediction Internal Server Error.'], 500);
         }
 
     }

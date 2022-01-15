@@ -1,6 +1,6 @@
 {
   "predictions": {
-    "-scale": "Fahrenheit",
+    "scale": "Fahrenheit",
     "city": "Amsterdam",
     "date": "20180112",
     "prediction": [

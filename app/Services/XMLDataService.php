@@ -20,7 +20,7 @@ class XMLDataService implements XmlDataInterface
             $value += (float) $prediction['value'];
         }
 
-        $value = $value/count($data['prediction']);
+        $value = round($value/count($data['prediction']),1);
 
         return [
             'scale' => $data['@attributes']['scale'],
