@@ -52,6 +52,19 @@ class BaseRepository implements EloquentRepositoryInterface
     }
 
     /**
+     * Find a model.
+     *
+     * @param array $payload
+     * @return Model
+     */
+    public function findByColumn(string $column, string $value): ?Model
+    {
+        $model = $this->model->where($column , '=', $value)->first();
+
+        return $model;
+    }
+
+    /**
      * Create a model.
      *
      * @param array $payload

@@ -22,7 +22,7 @@ class AuthController extends Controller
 
     /**
      * Register new user.
-     * @param  \App\Http\Requests\RegisterAuthRequest  $request
+     * @param  \App\Http\Requests\RegisterAuthRequest $request
      * @return \Illuminate\Http\Response
      */
     public function register(RegisterAuthRequest $request) {
@@ -51,7 +51,7 @@ class AuthController extends Controller
 
     /**
      * User login.
-     * @param  \App\Http\Requests\LoginAuthRequest  $request
+     * @param  \App\Http\Requests\LoginAuthRequest $request
      * @return \Illuminate\Http\Response
      */
     public function login(LoginAuthRequest $request) {

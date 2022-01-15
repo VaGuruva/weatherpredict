@@ -33,6 +33,14 @@ interface EloquentRepositoryInterface
     ): ?Model;
 
     /**
+     * Find a model.
+     *
+     * @param array $payload
+     * @return Model
+     */
+    public function findByColumn(string $column, string $value): ?Model;
+
+    /**
      * Create a model.
      *
      * @param array $payload

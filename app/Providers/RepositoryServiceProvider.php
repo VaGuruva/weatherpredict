@@ -13,6 +13,8 @@ use App\Repository\Eloquent\PartnersRepository;
 use App\Repository\PartnersRepositoryInterface; 
 use App\Repository\Eloquent\PredictionRepository; 
 use App\Repository\PredictionRepositoryInterface; 
+use App\Repository\Eloquent\DataProcessingRepository; 
+use App\Repository\DataProcessingInterface; 
 
 class RepositoryServiceProvider extends ServiceProvider
 {
@@ -28,6 +30,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(WeatherElementRepositoryInterface::class, WeatherElementRepository::class);
         $this->app->bind(PartnersRepositoryInterface::class, PartnersRepository::class);
         $this->app->bind(PredictionRepositoryInterface::class, PredictionRepository::class);
+        $this->app->bind(DataProcessingInterface::class, DataProcessingRepository::class);
     }
 
     /**

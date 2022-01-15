@@ -58,7 +58,7 @@ class PredictionsController extends Controller
      */
     public function store(Request $request)
     {
-        //Give third party service to fetch data from files
+       
     }
 
     /**
