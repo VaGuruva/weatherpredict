@@ -45,10 +45,10 @@ class DataProcessingController extends Controller
         $partner = $this->partnersRepository->findByColumn('name', $request->route('partner'));
         $path = public_path("data-sources");
 
-        if(isset($partner->data_format)){
+        if(isset($partner->name)){
             $files = File::allFiles("$path/$partner->name");
             foreach($files as $key => $path){
-                $result = $this->processingStrategy[$partner->data_format]->convertData($path);
+                $result = $this->processingStrategy[strtolower($path->getExtension())]->convertData($path);
             }
             dd($result);
             // save data $this->dataProcessingRepository->create($xmlResult);

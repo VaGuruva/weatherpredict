@@ -18,8 +18,7 @@ class PartnersResource extends JsonResource
             'id' => (string)$this->id,
             'type' => 'Partners',
             'attributes' => [
-                'name' => $this->name,
-                'data_format' => $this->data_format,
+                'name' => $this->name
             ]
         ];
     }

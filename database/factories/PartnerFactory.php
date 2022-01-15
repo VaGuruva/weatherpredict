@@ -14,8 +14,7 @@ class PartnerFactory extends Factory
     public function definition()
     {
         return [
-            'name' => $this->faker->name,
-            'data_format' => $this->faker->randomElement(['XML', 'CSV', 'JSON']),
+            'name' => $this->faker->name
         ];
     }
 }

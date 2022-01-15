@@ -15,5 +15,6 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(PartnerSeeder::class);
         $this->call(WeatherElementSeeder::class);
+        $this->call(PredictionSeeder::class);
     }
 }
