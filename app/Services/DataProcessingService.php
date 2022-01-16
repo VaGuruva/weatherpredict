@@ -19,6 +19,7 @@ class DataProcessingService implements DataProcessingServiceInterface
     private $jsonDataService;
     private $xmlDataService;
     private $processingStrategy;
+    private $publicPath;
 
     public function __construct(PredictionRepositoryInterface $predictionRepository, PartnersRepositoryInterface $partnersRepository, CsvDataInterface $csvDataService, JsonDataInterface $jsonDataService, XmlDataInterface $xmlDataService)
     {
@@ -32,6 +33,7 @@ class DataProcessingService implements DataProcessingServiceInterface
             "json" => $this->jsonDataService,
             "csv" => $this->csvDataService,
         ];
+        $this->publicPath = public_path("data-sources");
     }
 
     /**
@@ -42,22 +44,43 @@ class DataProcessingService implements DataProcessingServiceInterface
     public function storePartnerPrediction(string $partnerName): ?Model
     {
         $partner = $this->partnersRepository->findByColumn('name', $partnerName);
-        $publicPath = public_path("data-sources");
         $result = [];
 
         if(isset($partner->name)){
-            $files = File::allFiles("$publicPath/$partner->name");
+            $files = File::allFiles("$this->publicPath/$partner->name");
             
             foreach($files as $key => $filePath){
                 $result = $this->processingStrategy[strtolower($filePath->getExtension())]->convertData($filePath);
             }
 
-            $prediction = $this->predictionRepository->create($result);
-            $prediction->partners()->attach($partner);
+            $existingPredictionList = $partner->predictions()->get();
+
+            if(count($existingPredictionList) > 0){
+                $existingPrediction = $existingPredictionList[0];
+                $this->predictionRepository->update($existingPrediction->id, $result);
+                $prediction = $existingPrediction->fresh();
+            } else {
+                $prediction = $this->predictionRepository->create($result);
+                $prediction->partners()->attach($partner);
+                
+            }
 
             return $prediction;
         }
 
+    }
+
+    /**
+     * Refresh prediction for each partner.
+     *
+     * @return void
+     */
+    public function refreshPartnerPredictions(): void
+    {
+        $files = File::allFiles($this->publicPath);
+        foreach($files as $file){
+            $this->storePartnerPrediction($file->getRelativePath());
+        }
     }
 
 }

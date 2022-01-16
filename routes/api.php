@@ -8,6 +8,7 @@ use App\Http\Controllers\WeatherElementController;
 use App\Http\Controllers\PredictionsController;
 use App\Http\Controllers\DataProcessingController;
 use App\Http\Controllers\ForecastController;
+use App\Http\Controllers\DataSourceRefreshController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,6 +30,7 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::apiResource('/partners', PartnersController::class);
     Route::apiResource('/weather-elements', WeatherElementController::class);
     Route::apiResource('/predictions', PredictionsController::class);
+    Route::get('/refresh-data', [DataSourceRefreshController::class, 'refreshPartnerData']);
 });
 
 //Public routes
