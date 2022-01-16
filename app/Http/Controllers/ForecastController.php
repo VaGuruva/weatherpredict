@@ -5,15 +5,18 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Interfaces\PredictionAggregateServiceInterface;
+use App\Interfaces\DateCheckServiceInterface;
 use \Exception;
 
 class ForecastController extends Controller
 {
    private $predictionAggregateService;
+   private $dateCheckService;
   
-   public function __construct(PredictionAggregateServiceInterface $predictionAggregateService)
+   public function __construct(PredictionAggregateServiceInterface $predictionAggregateService, DateCheckServiceInterface $dateCheckService)
    {
        $this->predictionAggregateService = $predictionAggregateService;
+       $this->dateCheckService = $dateCheckService;
    }
 
     /**
@@ -24,7 +27,18 @@ class ForecastController extends Controller
     public function getForeCast(Request $request)
     {
         try {
-            $weatherElementPrediction = $this->predictionAggregateService->aggregate($request->route('scale'), $request->route('weatherElement'), $request->route('city'));
+            $dateDaysCheck = $this->dateCheckService->dateCheck($request->route('date'));
+
+            if($dateDaysCheck){
+                return response()->json(['message' => "Cannot give forecast. Entered date 10 days more than current date."], 400);
+            }
+
+            $weatherElementPrediction = $this->predictionAggregateService->aggregate(
+                $request->route('scale'), 
+                $request->route('weatherElement'), 
+                $request->route('city'),
+                $request->route('date')
+            );
 
             $response = [
                 'prediction' => [

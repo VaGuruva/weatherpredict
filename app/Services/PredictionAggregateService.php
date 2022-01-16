@@ -19,7 +19,7 @@ class PredictionAggregateService implements PredictionAggregateServiceInterface
         $this->weatherElementRepository = $weatherElementRepository;
     }
 
-    public function aggregate(string $scale, string $weatherElement, string $city): string
+    public function aggregate(string $scale, string $weatherElement, string $city, string $date): string
     {   
         $availableScales = [];
         $otherScales = [];
@@ -29,12 +29,20 @@ class PredictionAggregateService implements PredictionAggregateServiceInterface
         $scale = strtolower($scale);
         $weatherElement = strtolower($weatherElement);
 
-        $allpredictions = $this->predictionRepository->findBy2Columns(['scale' => $scale],['city' => $city]);
-        $storedWeatherElements = $this->weatherElementRepository->findBy(['type' => $weatherElement]);
+        $allpredictions = $this->predictionRepository->findBy3Columns(
+            ['scale' => $scale],
+            ['city' => $city],
+            ['date' => $date]
+        );
+
+        $storedWeatherElements = $this->weatherElementRepository->findBy(
+            ['type' => $weatherElement]
+        );
         
         //Get all defined scales for weather element type
         foreach($storedWeatherElements as $storedWeatherElement){
-            $availableScales[$storedWeatherElement->scale] = $storedWeatherElement->scale;
+            $storedElementScale = strtolower($storedWeatherElement->scale);
+            $availableScales[$storedElementScale] = $storedElementScale;
         }
 
         //Remove required scale from available scales
@@ -42,15 +50,16 @@ class PredictionAggregateService implements PredictionAggregateServiceInterface
         
         //Calculate total value for all predictions
         foreach($allpredictions as $prediction){
+            $predictionScale = strtolower($prediction->scale);
         
             //Get total value for require element
-            if($prediction->scale === $scale){
+            if($predictionScale === $scale){
                 $value += (float) $prediction->value;
             }
 
             //Convert other scales to required scale
-            if($prediction->scale !== $scale && $prediction->scale === $availableScales[$prediction->scale]){
-                $value += $this->convertValueToScale($weatherElement, $scale, $prediction->scale, (float)$prediction->value);
+            if($predictionScale !== $scale && $predictionScale === $availableScales[$predictionScale]){
+                $value += $this->convertValueToScale($weatherElement, $scale, $predictionScale, (float)$prediction->value);
             }
         }
 
@@ -96,6 +105,5 @@ class PredictionAggregateService implements PredictionAggregateServiceInterface
 
         return $conversionMap[$weatherElement][$scaleToConvert][$requiredScale];
     }
-
 
 }

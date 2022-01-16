@@ -85,7 +85,7 @@ class BaseRepository implements EloquentRepositoryInterface
      * @param array $payload
      * @return Collection
      */
-    public function findBy2Columns(array $column1, array $column2): Collection
+    public function findBy3Columns(array $column1, array $column2, array $column3): Collection
     {
         $column1_name = key($column1);
         $column1_value = $column1[$column1_name];
@@ -93,9 +93,13 @@ class BaseRepository implements EloquentRepositoryInterface
         $column2_name = key($column2);
         $column2_value = $column2[$column2_name];
 
+        $column3_name = key($column3);
+        $column3_value = $column3[$column3_name];
+
         $modelCollection = $this->model
             ->whereRaw("LOWER({$column1_name}) = '". strtolower($column1_value)."'") 
             ->whereRaw("LOWER({$column2_name}) = '". strtolower($column2_value)."'") 
+            ->whereRaw("LOWER({$column3_name}) = '". strtolower($column3_value)."'") 
             ->get();
 
         return $modelCollection;

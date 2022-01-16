@@ -13,6 +13,8 @@ use App\Interfaces\PredictionAggregateServiceInterface;
 use App\Services\PredictionAggregateService;
 use App\Interfaces\DataProcessingServiceInterface;
 use App\Services\DataProcessingService;
+use App\Interfaces\DateCheckServiceInterface;
+use App\Services\DateCheckService;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -28,6 +30,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(XmlDataInterface::class, XMLDataService::class);
         $this->app->bind(PredictionAggregateServiceInterface::class, PredictionAggregateService::class);
         $this->app->bind(DataProcessingServiceInterface::class, DataProcessingService::class);
+        $this->app->bind(DateCheckServiceInterface::class, DateCheckService::class);
     }
 
     /**
