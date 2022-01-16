@@ -29,8 +29,6 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::apiResource('/partners', PartnersController::class);
     Route::apiResource('/weather-elements', WeatherElementController::class);
     Route::apiResource('/predictions', PredictionsController::class);
-    
-    Route::get('/get-partner-predictions/{partner}', [DataProcessingController::class, 'storePartnerPredictions']);
 });
 
 //Public routes

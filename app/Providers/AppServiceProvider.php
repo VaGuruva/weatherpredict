@@ -11,6 +11,8 @@ use App\Interfaces\XmlDataInterface;
 use App\Services\XMLDataService;
 use App\Interfaces\PredictionAggregateServiceInterface;
 use App\Services\PredictionAggregateService;
+use App\Interfaces\DataProcessingServiceInterface;
+use App\Services\DataProcessingService;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -25,6 +27,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(JsonDataInterface::class, JsonDataService::class);
         $this->app->bind(XmlDataInterface::class, XMLDataService::class);
         $this->app->bind(PredictionAggregateServiceInterface::class, PredictionAggregateService::class);
+        $this->app->bind(DataProcessingServiceInterface::class, DataProcessingService::class);
     }
 
     /**

@@ -6,15 +6,19 @@ use Illuminate\Http\Request;
 use App\Models\Prediction;
 use App\Http\Resources\PredictionsResource;
 use App\Repository\PredictionRepositoryInterface;
+use App\Interfaces\DataProcessingServiceInterface;
 use Throwable;
+use \Exception;
 
 class PredictionsController extends Controller
 {
     private $predictionRepository;
+    private $dataProcessingService;
   
-    public function __construct(PredictionRepositoryInterface $predictionRepository)
+    public function __construct(PredictionRepositoryInterface $predictionRepository, DataProcessingServiceInterface $dataProcessingService)
     {
         $this->predictionRepository = $predictionRepository;
+        $this->dataProcessingService = $dataProcessingService;
     }
 
     /**
@@ -34,10 +38,33 @@ class PredictionsController extends Controller
     }
 
     /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @return \App\Http\Resources\PredictionsResource
+     */
+    public function store(Request $request)
+    {
+        try {
+            $prediction = $this->dataProcessingService->storePartnerPrediction($request->get('partner'));
+
+            if(isset($prediction)){
+                return PredictionsResource::collection([$prediction]);
+            } else {
+                return response()->json(['message' => "No predictions were found."], 400);
+            }
+            
+        } catch (Exception $e) {
+            report($e);
+            return response()->json(['message' => 'Failed to create resource Internal Server Error.'], 500);
+        }
+    }
+
+    /**
      * Display the specified resource.
      *
      * @param  \App\Models\Prediction $prediction
-     * @return \Illuminate\Http\Response
+     * @return \App\Http\Resources\PredictionsResource
      */
     public function show(Prediction $prediction)
     {
@@ -53,9 +80,9 @@ class PredictionsController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Prediction  $prediction
-     * @return \Illuminate\Http\Response
+     * @param  \Illuminate\Http\Request $request
+     * @param  \App\Models\Prediction $prediction
+     * @return \App\Http\Resources\PredictionsResource
      */
     public function update(Request $request, Prediction $prediction)
     {
