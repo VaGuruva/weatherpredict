@@ -9,6 +9,8 @@ use App\Interfaces\JsonDataInterface;
 use App\Services\JsonDataService;
 use App\Interfaces\XmlDataInterface;
 use App\Services\XMLDataService;
+use App\Interfaces\PredictionAggregateServiceInterface;
+use App\Services\PredictionAggregateService;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -22,6 +24,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(CsvDataInterface::class, CsvDataService::class);
         $this->app->bind(JsonDataInterface::class, JsonDataService::class);
         $this->app->bind(XmlDataInterface::class, XMLDataService::class);
+        $this->app->bind(PredictionAggregateServiceInterface::class, PredictionAggregateService::class);
     }
 
     /**

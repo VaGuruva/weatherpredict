@@ -65,6 +65,43 @@ class BaseRepository implements EloquentRepositoryInterface
     }
 
     /**
+     * Find a model collection.
+     *
+     * @param array $payload
+     * @return Collection
+     */
+    public function findBy(array $payload): Collection
+    {
+        $name = key($payload);
+        $value = $payload[$name];
+
+        $modelCollection = $this->model->where($name , 'LIKE', '%'.$value.'%')->get();
+        return $modelCollection;
+    }
+
+    /**
+     * Find a model collection.
+     *
+     * @param array $payload
+     * @return Collection
+     */
+    public function findBy2Columns(array $column1, array $column2): Collection
+    {
+        $column1_name = key($column1);
+        $column1_value = $column1[$column1_name];
+
+        $column2_name = key($column2);
+        $column2_value = $column2[$column2_name];
+
+        $modelCollection = $this->model
+            ->whereRaw("LOWER({$column1_name}) = '". strtolower($column1_value)."'") 
+            ->whereRaw("LOWER({$column2_name}) = '". strtolower($column2_value)."'") 
+            ->get();
+
+        return $modelCollection;
+    }
+
+    /**
      * Create a model.
      *
      * @param array $payload

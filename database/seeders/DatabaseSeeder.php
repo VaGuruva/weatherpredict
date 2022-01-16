@@ -13,8 +13,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $this->call(PartnerSeeder::class);
-        $this->call(WeatherElementSeeder::class);
+        //$this->call(PartnerSeeder::class);
+        //$this->call(WeatherElementSeeder::class);
         $this->call(PredictionSeeder::class);
     }
 }

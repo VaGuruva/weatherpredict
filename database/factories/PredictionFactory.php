@@ -14,13 +14,12 @@ class PredictionFactory extends Factory
     public function definition()
     {
         $scales = [
-            'Degrees',
-            'Fahrenheit',
-            'Celsius',
-            'Kelvin',
+            'fahrenheit',
+            'celsius',
+            'kelvin',
             'g.m-3',
             'g.kg-1',
-            'Knot'
+            'knot'
         ];
 
         return [

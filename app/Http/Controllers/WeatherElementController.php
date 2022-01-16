@@ -43,7 +43,12 @@ class WeatherElementController extends Controller
     public function store(Request $request)
     {
         try {
-            $weatherElement =  $this->weatherElementRepository->create($request->all());
+            $payload = [
+                'scale' => strtolower($request->get('scale')), 
+                'type' => strtolower($request->get('type')),
+            ];
+            
+            $weatherElement =  $this->weatherElementRepository->create($payload);
             return WeatherElementResource::collection([$weatherElement]);
         } catch (Throwable $e) {
             report($e);

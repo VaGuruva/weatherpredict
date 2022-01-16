@@ -7,6 +7,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\WeatherElementController;
 use App\Http\Controllers\PredictionsController;
 use App\Http\Controllers\DataProcessingController;
+use App\Http\Controllers\ForecastController;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,3 +36,4 @@ Route::middleware('auth:sanctum')->group(function() {
 //Public routes
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+Route::get('/predict-weather/{city}/{weatherElement}/{scale}/{nextDays?}', [ForecastController::class, 'getForeCast']);

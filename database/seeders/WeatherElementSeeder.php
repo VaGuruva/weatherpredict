@@ -15,19 +15,18 @@ class WeatherElementSeeder extends Seeder
     public function run()
     {
         $scales = [
-            'Temperature' => [
-                'Degrees',
-                'Fahrenheit',
-                'Celsius',
-                'Kelvin'
+            'temperature' => [
+                'fahrenheit',
+                'celsius',
+                'kelvin'
             ],
-            'Humidity' => [
+            'humidity' => [
                 'g.m-3',
                 'g.kg-1'
 
             ],
-            'Wind' => [
-                'Knot'
+            'wind' => [
+                'knot'
             ]
         ];
 

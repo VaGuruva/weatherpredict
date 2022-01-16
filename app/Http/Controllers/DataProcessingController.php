@@ -3,14 +3,13 @@
 namespace App\Http\Controllers;
 use App\Repository\PredictionRepositoryInterface;
 use App\Repository\PartnersRepositoryInterface;
-use App\Http\Resources\UsersResource;
 use App\Interfaces\CsvDataInterface;
 use App\Interfaces\JsonDataInterface;
 use App\Interfaces\XmlDataInterface;
-use Illuminate\Support\Facades\File;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Http\Resources\PredictionsResource;
+use Illuminate\Support\Facades\File;
 use \Exception;
 
 class DataProcessingController extends Controller
@@ -37,9 +36,10 @@ class DataProcessingController extends Controller
    }
 
     /**
-     * Display a listing of the resource.
+     * Store a newly created resource in storage.
+     *
      * @param  \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
+     * @return \App\Http\Resources\PredictionsResource
      */
     public function storePartnerPredictions(Request $request)
     {
@@ -63,7 +63,7 @@ class DataProcessingController extends Controller
 
         } catch (Exception $e) {
             report($e);
-            return response()->json(['message' => 'Failed to store partner prediction Internal Server Error.'], 500);
+            return response()->json(['message' => 'Failed to store partner prediction Internal Server Error.'.$e], 500);
         }
 
     }

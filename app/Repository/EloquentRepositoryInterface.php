@@ -38,7 +38,15 @@ interface EloquentRepositoryInterface
      * @param array $payload
      * @return Model
      */
-    public function findByColumn(string $column, string $value): ?Model;
+    public function findBy2Columns(array $column1, array $column2): Collection;
+
+    /**
+     * Find a model collection.
+     *
+     * @param array $payload
+     * @return Collection
+     */
+    public function findBy(array $payload): Collection;
 
     /**
      * Create a model.
