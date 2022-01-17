@@ -27,9 +27,9 @@ class ForecastController extends Controller
     public function getForeCast(Request $request)
     {
         try {
-            $dateDaysCheck = $this->dateCheckService->dateCheck($request->route('date'));
+            $tenDaysCheck = $this->dateCheckService->dateCheck($request->route('date'));
 
-            if($dateDaysCheck){
+            if($tenDaysCheck){
                 return response()->json(['message' => "Cannot give forecast. Entered date 10 days more than current date."], 400);
             }
 
