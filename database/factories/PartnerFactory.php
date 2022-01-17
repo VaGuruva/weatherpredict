@@ -14,7 +14,7 @@ class PartnerFactory extends Factory
     public function definition()
     {
         return [
-            'name' => $this->faker->randomElement(['TempPartner1','TempPartner2','TempPartner3'])
+            'name' => $this->faker->name
         ];
     }
 }
